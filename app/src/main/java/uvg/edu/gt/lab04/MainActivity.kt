@@ -39,12 +39,16 @@ class MainActivity : ComponentActivity() {
                             HomeView(navController)
                         }
                         composable(
-                            route = Screen.GenerateMemeView.route + "/{templateID}",
-                            arguments = listOf(navArgument("templateID") { type = NavType.StringType })
+                            route = Screen.GenerateMemeView.route + "/{templateID}/{templateName}",
+                            arguments = listOf(
+                                navArgument("templateID") { type = NavType.StringType },
+                                navArgument("templateName") { type = NavType.StringType })
                         ){ backStackEntry ->
                             val templateID = backStackEntry.arguments?.getString("templateID")
+                            val templateName = backStackEntry.arguments?.getString("templateName")
                             requireNotNull(templateID) { Log.e("Error","templateID must NOT be null")}
-                            GenerateMemeView(navController, templateID)
+                            requireNotNull(templateName) { Log.e("Error","templateName must NOT be null")}
+                            GenerateMemeView(navController, templateID, templateName)
                         }
                     }
                 }

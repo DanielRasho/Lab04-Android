@@ -20,6 +20,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -51,7 +52,8 @@ fun HomeView(navController: NavController) {
                 .fillMaxWidth()
                 .padding(8.dp),
             fontSize = 24.sp,
-            fontWeight = FontWeight.Bold
+            fontWeight = FontWeight.Bold,
+            textAlign = TextAlign.Center
         )
         Spacer(modifier = Modifier.height(16.dp))
         LazyColumn(modifier = Modifier.fillMaxWidth()){
@@ -68,7 +70,7 @@ fun HomeView(navController: NavController) {
 fun memeCard(navController: NavController, meme : Meme){
     Card (modifier = Modifier.fillMaxWidth(),
         onClick = {
-            navController.navigate(Screen.GenerateMemeView.route + "/${meme.id}")
+            navController.navigate(Screen.GenerateMemeView.route + "/${meme.id}/${meme.name}")
         }){
         AsyncImage(model = meme.url,
             contentDescription = "Meme Template",

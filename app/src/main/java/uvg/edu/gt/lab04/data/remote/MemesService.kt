@@ -8,6 +8,7 @@ import io.ktor.client.plugins.ServerResponseException
 import io.ktor.client.request.request
 import io.ktor.client.statement.HttpResponse
 import io.ktor.http.HttpMethod
+import io.ktor.http.parameters
 import kotlinx.serialization.json.Json
 import org.json.JSONArray
 import org.json.JSONObject
@@ -53,5 +54,49 @@ class MemesService (private val client : HttpClient){
             memes = emptyList<Meme>()
         }
         return memes
+    }
+
+    suspend fun getTemplateWithCaption(templateId : String, upperText: String, bottomText : String) : String {
+        var templateUrl : String
+        try {
+            // Making Request
+            val response : HttpResponse = client.request(HttpRoutes.CAPTION_IMAGE){
+                method = HttpMethod.Post
+                url {
+                    parameters.append("template_id", templateId)
+                    parameters.append( "username", "smaugtur")
+                    parameters.append("password", "soroArx5#")
+                    parameters.append("text0", upperText)
+                    parameters.append("text1", bottomText)
+                }
+            }
+
+            // Translating JSON response
+            val data : JSONObject = JSONObject(response.body() as String)
+
+            println(templateId + upperText + bottomText)
+            println(response.body() as String)
+
+            // Checking response state
+            templateUrl = if( data.getBoolean("success")){
+                data.getJSONObject("data")
+                    .getString("url")
+            } else
+                HttpRoutes.PLACE_HOLDER_IMAGE
+
+        } catch (e : RedirectResponseException){
+            // 3xx - responses
+            println("Error: ${e.response.status.description}")
+            templateUrl = HttpRoutes.PLACE_HOLDER_IMAGE
+        } catch (e: ClientRequestException){
+            // 4xx - responses
+            println("Error: ${e.response.status.description}")
+            templateUrl = HttpRoutes.PLACE_HOLDER_IMAGE
+        } catch (e: ServerResponseException){
+            // 5xx - responses
+            println("Error: ${e.response.status.description}")
+            templateUrl = HttpRoutes.PLACE_HOLDER_IMAGE
+        }
+        return templateUrl
     }
 }
